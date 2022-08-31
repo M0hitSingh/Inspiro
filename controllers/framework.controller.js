@@ -55,7 +55,7 @@ const UpdateFramework = async(req , res ,next)=>{
 }
 const DeleteFramework = async(req , res ,next)=>{
     try{
-        const id = req.param.id
+        const id = req.params.id
         const result = await FrameworkMaster.findByIdAndDelete(id);
         if(!result){
             const message = "Not Found";

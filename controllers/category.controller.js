@@ -55,7 +55,7 @@ const UpdateCategory = async(req , res ,next)=>{
 }
 const DeleteCategory = async(req , res ,next)=>{
     try{
-        const id = req.param.id
+        const id = req.params.id
         const result = await Category.findByIdAndDelete(id);
         if(!result){
             const message = "Not Found";

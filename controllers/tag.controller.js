@@ -53,7 +53,7 @@ const UpdateTag = async(req , res ,next)=>{
 }
 const DeleteTag = async(req , res ,next)=>{
     try{
-        const id = req.param.id
+        const id = req.params.id
         const result = await Tag.findByIdAndDelete(id);
         if(!result){
             const message = "Not Found";

@@ -55,7 +55,7 @@ const UpdatePages = async(req , res ,next)=>{
 }
 const DeletePages = async(req , res ,next)=>{
     try{
-        const id = req.param.id
+        const id = req.params.id
         const result = await PagesMaster.findByIdAndDelete(id);
         if(!result){
             const message = "Not Found";
