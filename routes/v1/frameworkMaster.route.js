@@ -11,7 +11,9 @@ router
     .route("/")
     .get(getAllFramework)
     .post(AddFramework)
-    .patch(UpdateFramework)
+    .patch(UpdateFramework);
+router
+    .route("/:id")
     .delete(DeleteFramework)
 
 

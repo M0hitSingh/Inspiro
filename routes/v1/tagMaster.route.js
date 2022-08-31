@@ -11,7 +11,9 @@ router
     .route("/")
     .get(getAllTag)
     .post(AddTag)
-    .patch(UpdateTag)
+    .patch(UpdateTag);
+router
+    .route("/:id")
     .delete(DeleteTag)
 
 module.exports = router;

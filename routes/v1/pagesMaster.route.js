@@ -11,7 +11,9 @@ router
     .route("/")
     .get(getAllPages)
     .post(AddPages)
-    .patch(UpdatePages)
+    .patch(UpdatePages);
+router
+    .route("/:id")
     .delete(DeletePages)
 
 

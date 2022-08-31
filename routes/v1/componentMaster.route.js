@@ -11,7 +11,10 @@ router
     .route("/")
     .get(getAllComponent)
     .post(AddComponent)
-    .patch(UpdateComponent)
+    .patch(UpdateComponent);
+
+router
+    .route("/:id")
     .delete(DeleteComponent)
 
 

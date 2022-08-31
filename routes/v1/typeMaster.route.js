@@ -11,7 +11,9 @@ router
     .route("/")
     .get(getAllType)
     .post(AddType)
-    .patch(UpdateType)
+    .patch(UpdateType);
+router
+    .route("/:id")
     .delete(DeleteType)
 
 

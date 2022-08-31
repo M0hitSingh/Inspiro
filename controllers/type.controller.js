@@ -54,7 +54,7 @@ const UpdateType = async(req , res ,next)=>{
 }
 const DeleteType = async(req , res ,next)=>{
     try{
-        const id = req.body.Id
+        const id = req.param.id
         const result = await Type.findByIdAndDelete(id);
         if(!result){
             const message = "Not Found";
