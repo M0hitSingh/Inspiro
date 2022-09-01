@@ -1,11 +1,20 @@
 const { response } = require("express");
 const { createCustomError } = require("../errors/customAPIError")
 const { sendSuccessApiResponse } = require("../middleware/successApiResponse")
+const APIFeatures = require('../util/APIfeature');
 const Category = require("../model/categoryMaster")
+
 const getAllCategory = async(req ,res, next)=>{
     try{
-        const category =await Category.find().populate("Addedby")
-        const response = sendSuccessApiResponse(category)
+        const SearchString = ["Name"];
+        const query = new APIFeatures(Category.find().populate("Addedby"),req.query)
+        .filter()
+        .sort()
+        .page()
+        .limit()
+        .search(SearchString)
+        const data = await query.query;
+        const response = sendSuccessApiResponse(data)
         res.status(200).json(response);
     }
     catch(err){
@@ -19,7 +28,7 @@ const AddCategory = async(req ,res, next)=>{
         const category = req.body.Name;
         const isCategory =await Category.findOne({Name:category});
         if(isCategory){
-            const message = "Tag Already Exist";
+            const message = "Category Already Exist";
             return next(createCustomError(message, 301));
         }
         const doc = new Category({

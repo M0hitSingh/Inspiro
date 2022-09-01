@@ -1,11 +1,19 @@
 const { createCustomError } = require("../errors/customAPIError")
 const { sendSuccessApiResponse } = require("../middleware/successApiResponse");
 const FrameworkMaster = require("../model/FrameworkMaster");
+const APIFeatures = require("../util/APIfeature");
 
 const getAllFramework = async(req ,res, next)=>{
     try{
-        const Framework =await FrameworkMaster.find().populate("Addedby")
-        const response = sendSuccessApiResponse(Framework)
+        const SearchString = ["Name"];
+        const query = new APIFeatures(FrameworkMaster.find().populate("Addedby"),req.query)
+        .filter()
+        .sort()
+        .page()
+        .limit()
+        .search(SearchString)
+        const data = await query.query;
+        const response = sendSuccessApiResponse(data)
         res.status(200).json(response);
     }
     catch(err){
@@ -37,6 +45,7 @@ const AddFramework = async(req ,res, next)=>{
 
 const UpdateFramework = async(req , res ,next)=>{
     try{
+
         const id = req.body.Id
         const Name = req.body.Name;
         const result = await FrameworkMaster.findById(id);

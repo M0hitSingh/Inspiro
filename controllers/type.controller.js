@@ -1,11 +1,19 @@
 const { createCustomError } = require("../errors/customAPIError");
 const { sendSuccessApiResponse } = require("../middleware/successApiResponse");
-const Type = require("../model/TypeMaster")
+const Type = require("../model/TypeMaster");
+const APIFeatures = require("../util/APIfeature");
 
 const getAllType  = async(req ,res, next)=>{
     try{
-        const types = await Type.find().populate("Addedby")
-        const response = sendSuccessApiResponse(types)
+        const SearchString = ["Name"];
+        const query = new APIFeatures(Type.find().populate("Addedby"),req.query)
+        .filter()
+        .sort()
+        .page()
+        .limit()
+        .search(SearchString)
+        const data = await query.query;
+        const response = sendSuccessApiResponse(data)
         res.status(200).json(response);
     }
     catch(err){

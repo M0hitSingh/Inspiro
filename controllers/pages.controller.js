@@ -1,11 +1,19 @@
 const { createCustomError } = require("../errors/customAPIError")
 const { sendSuccessApiResponse } = require("../middleware/successApiResponse");
 const PagesMaster = require("../model/PagesMaster");
+const APIFeatures = require("../util/APIfeature");
 
 const getAllPages = async(req ,res, next)=>{
     try{
-        const Pages =await PagesMaster.find().populate("Addedby")
-        const response = sendSuccessApiResponse(Pages)
+        const SearchString = ["Name"];
+        const query = new APIFeatures(PagesMaster.find().populate("Addedby"),req.query)
+        .filter()
+        .sort()
+        .page()
+        .limit()
+        .search(SearchString)
+        const data = await query.query;
+        const response = sendSuccessApiResponse(data)
         res.status(200).json(response);
     }
     catch(err){
@@ -17,9 +25,9 @@ const AddPages = async(req ,res, next)=>{
     try{
         const Addedby = req.user.userId
         const Pages = req.body.Name;
-        const isPages =await PagesMaster.findOne({Name:Pages});
+        const isPages =await PagesMaster.findOne({Name:Pages})
         if(isPages){
-            const message = "Tag Already Exist";
+            const message = "Pages Already Exist";
             return next(createCustomError(message, 301));
         }
         const doc = new PagesMaster({

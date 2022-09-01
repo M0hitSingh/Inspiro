@@ -1,10 +1,18 @@
 const { createCustomError } = require("../errors/customAPIError")
 const { sendSuccessApiResponse } = require("../middleware/successApiResponse")
 const ComponentMaster = require("../model/ComponentMaster");
+const APIFeatures = require('../util/APIfeature')
 const getAllComponent = async(req ,res, next)=>{
     try{
-        const Component =await ComponentMaster.find().populate("Addedby")
-        const response = sendSuccessApiResponse(Component)
+        const SearchString = ["Name"];
+        const query = new APIFeatures(ComponentMaster.find().populate("Addedby"),req.query)
+        .filter()
+        .sort()
+        .page()
+        .limit()
+        .search(SearchString)
+        const data = await query.query;
+        const response = sendSuccessApiResponse(data)
         res.status(200).json(response);
     }
     catch(err){
@@ -18,7 +26,7 @@ const AddComponent = async(req ,res, next)=>{
         const Component = req.body.Name;
         const isComponent =await ComponentMaster.findOne({Name:Component});
         if(isComponent){
-            const message = "Tag Already Exist";
+            const message = "Component Already Exist";
             return next(createCustomError(message, 301));
         }
         const doc = new ComponentMaster({

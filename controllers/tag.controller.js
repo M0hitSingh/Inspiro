@@ -1,10 +1,18 @@
 const { createCustomError } = require("../errors/customAPIError")
 const { sendSuccessApiResponse } = require("../middleware/successApiResponse")
-const Tag = require("../model/TagMaster")
+const Tag = require("../model/TagMaster");
+const APIFeatures = require("../util/APIfeature");
 const getAllTag  = async(req ,res, next)=>{
     try{
-        const tags =await Tag.find().populate("Addedby");
-        const response = sendSuccessApiResponse(tags)
+        const SearchString = ["Name"];
+        const query = new APIFeatures(Tag.find().populate("Addedby"),req.query)
+        .filter()
+        .sort()
+        .page()
+        .limit()
+        .search(SearchString)
+        const data = await query.query;
+        const response = sendSuccessApiResponse(data)
         res.status(200).json(response);
     }
     catch(err){
