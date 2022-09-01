@@ -17,6 +17,10 @@ const ComponentMasterSchema = new mongoose.Schema(
             type:schema.Types.ObjectId,
             ref:"WebsiteMaster"
         }],
+        count:{
+            type:Number,
+            default:0
+        },
         createdAt: {
             type: Date, 
             default: Date.now(),
