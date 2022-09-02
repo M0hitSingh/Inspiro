@@ -12,7 +12,7 @@ const getAllComponent = async(req ,res, next)=>{
         .limit()
         .search(SearchString)
         const data = await query.query;
-        const getCount = await Category.countDocuments();
+        const getCount = await ComponentMaster.countDocuments();
         const response = sendSuccessApiResponse({data,getCount})
         res.status(200).json(response);
     }
