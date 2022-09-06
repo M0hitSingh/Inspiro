@@ -59,8 +59,13 @@ const WebsiteMasterSchema = new mongoose.Schema(
             }
         }],
         AssociatedPages:[{
-            Name:{
-                type:String
+            Category:{
+                id:{
+                    type:schema.Types.ObjectId
+                },
+                Name:{
+                    type:String
+                }
             },
             PageLink:{
                 type:String
@@ -71,10 +76,20 @@ const WebsiteMasterSchema = new mongoose.Schema(
                 type:String
             },
             Category:{
-                type:String
+                id:{
+                    type:schema.Types.ObjectId
+                },
+                Name:{
+                    type:String
+                }
             },
             SubCategory:{
-                type:String
+                id:{
+                    type:schema.Types.ObjectId
+                },
+                Name:{
+                    type:String
+                }
             },
             DesktopSS:{
                 type:String
