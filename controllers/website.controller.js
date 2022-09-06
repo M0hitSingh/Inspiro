@@ -92,7 +92,7 @@ const updateWebsite = async (req, res, next)=>{
                 })
                 const isType =await TypeMaster.findOne({_id:Type.id,Websites:id})
                 if(!isType) await TypeMaster.findOneAndUpdate({_id:Type.id},{$push:{Websites:id}})
-                if(Framework.id){
+                if(Framework){
                     const isFrame = await FrameworkMaster.findOne({_id:Framework.id,Websites:id})
                     if(isFrame) await FrameworkMaster.findOneAndUpdate({_id:Framework.id},{$push:{Websites:id}})
                 }
