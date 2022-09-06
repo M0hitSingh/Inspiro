@@ -79,7 +79,7 @@ const updateWebsite = async (req, res, next)=>{
         if(!website){
             return next(createCustomError("Not Found",404))
         }
-        if(website.Addedby != req.user.userId ){
+        if(website.Addedby.toString() != req.user.userId.toString() ){
             return next(createCustomError("Cannot Update other's website",404))
         }
         switch (step) {
@@ -102,8 +102,8 @@ const updateWebsite = async (req, res, next)=>{
                     Categorys:Categorys,
                 })
                 for(let i = 0; i < Categorys.length ; i++){
-                    const isCategory = await Category.findOne({Name:Categorys[i],Websites:id})
-                    if(!isCategory) await Category.findOneAndUpdate({Name:Categorys[i]},{$push:{Websites:id}})
+                    const isCategory = await Category.findOne({_id:Categorys[i].id,Websites:id})
+                    if(!isCategory) await Category.findOneAndUpdate({_id:Categorys[i].id},{$push:{Websites:id}})
                 }
                 break;
             case "4":
@@ -111,8 +111,8 @@ const updateWebsite = async (req, res, next)=>{
                     Tags:Tags,
                 })
                 for(let i = 0; i < Tags.length ; i++){
-                    const isTag = await Tag.findOne({Name:Tags[i],Websites:id})
-                    if(!isTag) await Tag.findOneAndUpdate({Name:Tags[i]},{$push:{Websites:id}})
+                    const isTag = await Tag.findOne({_id:Tags[i].id,Websites:id})
+                    if(!isTag) await Tag.findOneAndUpdate({_id:Tags[i].id},{$push:{Websites:id}})
                 }
                 break;
             case "5":
