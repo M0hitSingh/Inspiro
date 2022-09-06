@@ -43,10 +43,20 @@ const WebsiteMasterSchema = new mongoose.Schema(
             type:Number
         },
         Categorys:[{
-            type:String
+            id:{
+                type:schema.Types.ObjectId
+            },
+            Name:{
+                type:String
+            }
         }],
         Tags:[{
-            type:String
+            id:{
+                type:schema.Types.ObjectId
+            },
+            Name:{
+                type:String
+            }
         }],
         AssociatedPages:[{
             Name:{
