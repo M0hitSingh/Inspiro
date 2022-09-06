@@ -8,12 +8,12 @@ const WebsiteMasterSchema = new mongoose.Schema(
             required: true,
             trim: true,
         },
-        DesktopSS:{
+        DesktopSS:[{
             type:String
-        },
-        MobileSS:{
+        }],
+        MobileSS:[{
             type:String
-        },
+        }],
         Colors:[{
             type:String
         }],
@@ -44,7 +44,32 @@ const WebsiteMasterSchema = new mongoose.Schema(
             PageLink:{
                 type:String
             },
-        }]
+        }],
+        AssociatedComponent :[{
+            pageURL:{
+                type:String
+            },
+            Category:{
+                type:String
+            },
+            SubCategory:{
+                type:String
+            },
+            DesktopSS:{
+                type:String
+            },
+            MobileSS:{
+                type:String
+            }
+        }],
+        Addedby :{
+            type:schema.Types.ObjectId,
+            ref:"User"
+        },
+        isActive :{
+            type:Boolean,
+            default:true
+        }
     }
 );
 

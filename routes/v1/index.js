@@ -7,6 +7,7 @@ const categoryRoute = require("./categoryMaster.route")
 const frameworkRoute = require('./frameworkMaster.route')
 const pageRoute = require("./pagesMaster.route")
 const componentRoute = require('./componentMaster.route')
+const websiteRoute = require('./website.route')
 const fetchURIRoute = require('./fetchURI.route');
 
 
@@ -24,6 +25,7 @@ router.use("/category-master",authorization,categoryRoute)
 router.use("/framework-master",authorization,frameworkRoute)
 router.use("/pages-master",authorization,pageRoute)
 router.use("/components-master",authorization,componentRoute)
+router.use("/website",authorization,websiteRoute)
 router.use("/fetch",authorization,fetchURIRoute);
 
 router.get("/", (req, res) => {

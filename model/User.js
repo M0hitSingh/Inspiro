@@ -2,6 +2,7 @@ const bcrypt =  require("bcryptjs");
 const crypto = require('crypto')
 const  jwt = require('jsonwebtoken');
 const mongoose = require("mongoose")
+const schema = mongoose.Schema;
 const expression = { isActive: { $eq: true } };
 
 function permissionLengthValidator(arr) {
@@ -67,6 +68,10 @@ const userSchema = new mongoose.Schema(
             },
             default:"User"
         },
+        Websites:[{
+            type:schema.Types.ObjectId,
+            ref:"WebsiteMaster"
+        }],
         isVerified: {
             type:Boolean,
             default:false
