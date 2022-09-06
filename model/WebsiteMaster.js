@@ -21,15 +21,26 @@ const WebsiteMasterSchema = new mongoose.Schema(
             type:String
         }],
         Type:{
+            id:{
+                type:schema.Types.ObjectId
+            },
             Name:{
                 type:String
+            }
+        },  
+        Framework:{
+            id:{
+                type:schema.Types.ObjectId
             },
-            Framework:{
-                type:String
-            },
-            MarketplaceLink:{
+            Name:{
                 type:String
             }
+        },    
+        MarketplaceLink:{
+            type:String
+        },
+        Price:{
+            type:Number
         },
         Categorys:[{
             type:String

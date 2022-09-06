@@ -1,8 +1,14 @@
-const { default: mongoose } = require('mongoose');
+const { default: mongoose, Mongoose } = require('mongoose');
 const { createCustomError } = require('../errors/customAPIError');
 const { sendSuccessApiResponse } = require('../middleware/successApiResponse');
+const TypeMaster = require('../model/TypeMaster');
 const User = require('../model/User');
 const WebsiteMaster = require('../model/WebsiteMaster');
+const FrameworkMaster = require('../model/FrameworkMaster')
+const Category = require("../model/categoryMaster")
+const Tag = require("../model/TagMaster")
+// const CategoryMaster = require('../model/CategoryMaster')
+
 
 const addWebsite = async(req, res, next)=>{
     try{
@@ -34,6 +40,10 @@ const addWebsite = async(req, res, next)=>{
         website.step1 = true;
         website.Colors = Colors;
         website.FontFamily = FontFamily;
+        const isUser = await User.findById(req.user.userId);
+        isUser.Websites.push(website._id);
+        website.Addedby = req.user.userId;
+        await isUser.save();
         await website.save()
         // await isUser.save()
         res.json(website)
@@ -51,12 +61,15 @@ const updateWebsite = async (req, res, next)=>{
             MobileSS,
             Colors,
             FontFamily,
+            MarketplaceLink,
+            Price,
+            Framework,
             Type,
             Categorys,
             Tags,
             AssociatedPages,
             pageURL,
-            Category,
+            MyCategory,
             SubCategory,
         } = req.body
         const step = req.query.step;
@@ -66,24 +79,41 @@ const updateWebsite = async (req, res, next)=>{
         if(!website){
             return next(createCustomError("Not Found",404))
         }
-        // if(website.Addedby != req.user.userId ){
-        //     return next(createCustomError("Cannot Update other's website",404))
-        // }
+        if(website.Addedby != req.user.userId ){
+            return next(createCustomError("Cannot Update other's website",404))
+        }
         switch (step) {
             case "2":
                 await WebsiteMaster.findByIdAndUpdate(id,{
                     Type:Type,
+                    Framework:Framework,
+                    MarketplaceLink:MarketplaceLink,
+                    Price:Price
                 })
+                const isType =await TypeMaster.findOne({_id:Type.id,Websites:id})
+                if(!isType) await TypeMaster.findOneAndUpdate({_id:Type.id},{$push:{Websites:id}})
+                if(Framework.id){
+                    const isFrame = await FrameworkMaster.findOne({_id:Framework.id,Websites:id})
+                    if(isFrame) await FrameworkMaster.findOneAndUpdate({_id:Framework.id},{$push:{Websites:id}})
+                }
                 break;
             case "3":
                 await WebsiteMaster.findByIdAndUpdate(id,{
                     Categorys:Categorys,
                 })
+                for(let i = 0; i < Categorys.length ; i++){
+                    const isCategory = await Category.findOne({Name:Categorys[i],Websites:id})
+                    if(!isCategory) await Category.findOneAndUpdate({Name:Categorys[i]},{$push:{Websites:id}})
+                }
                 break;
             case "4":
                 await WebsiteMaster.findByIdAndUpdate(id,{
                     Tags:Tags,
                 })
+                for(let i = 0; i < Tags.length ; i++){
+                    const isTag = await Tag.findOne({Name:Tags[i],Websites:id})
+                    if(!isTag) await Tag.findOneAndUpdate({Name:Tags[i]},{$push:{Websites:id}})
+                }
                 break;
             case "5":
                 await WebsiteMaster.findByIdAndUpdate(id,{
@@ -92,28 +122,22 @@ const updateWebsite = async (req, res, next)=>{
                 break;
             case "6":
                 pageURL = JSON.parse(pageURL)
-                Category = JSON.parse(Category)
+                MyCategory = JSON.parse(MyCategory)
                 SubCategory = JSON.parse(SubCategory)
                 let filename = req.files;
                 if(filename.DesktopSS){
                     for(let i = 0; i<filename.DesktopSS.length ;i++){
                         const toAdd = {
                             pageURL:pageURL[i],
-                            Category:Category[i],
+                            Category:MyCategory[i],
                             SubCategory:SubCategory[i],
                             DesktopSS:"/public/WebsiteSS/"+filename.DesktopSS[i].originalname,
                             MobileSS:"/public/WebsiteSS/"+filename.MobileSS[i].originalname
                         }
                         website.AssociatedComponent.push(toAdd)
-                        website.step6 = true;
                         await website.save()
                     }
                 }
-                const isUser = await User.findById(req.user.userId);
-                isUser.Websites.push(website._id);
-                website.Addedby = req.user.userId;
-                await isUser.save();
-                await website.save();
                 break;
             default:
                 return next(createCustomError("Step Not defined",400));
