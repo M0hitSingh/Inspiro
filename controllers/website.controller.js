@@ -125,6 +125,7 @@ const updateWebsite = async (req, res, next)=>{
                 MyCategory = JSON.parse(MyCategory)
                 SubCategory = JSON.parse(SubCategory)
                 let filename = req.files;
+                console.log(filename)
                 if(filename.DesktopSS){
                     for(let i = 0; i<filename.DesktopSS.length ;i++){
                         const toAdd = {

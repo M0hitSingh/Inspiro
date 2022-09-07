@@ -91,12 +91,12 @@ const WebsiteMasterSchema = new mongoose.Schema(
                     type:String
                 }
             },
-            DesktopSS:{
+            DesktopSS:[{
                 type:String
-            },
-            MobileSS:{
+            }],
+            MobileSS:[{
                 type:String
-            }
+            }]
         }],
         Addedby :{
             type:schema.Types.ObjectId,
