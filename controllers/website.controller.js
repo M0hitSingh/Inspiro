@@ -57,8 +57,8 @@ const updateWebsite = async (req, res, next)=>{
         let {
             id,
             url,
-            DesktopSS,
-            MobileSS,
+            DesktopSSLength,
+            MobileSSLength,
             Colors,
             FontFamily,
             MarketplaceLink,
@@ -75,7 +75,7 @@ const updateWebsite = async (req, res, next)=>{
         const step = req.query.step;
         console.log(step)
         const website = await WebsiteMaster.findById(mongoose.Types.ObjectId(id));
-        console.log(website)
+        // console.log(website)
         if(!website){
             return next(createCustomError("Not Found",404))
         }
@@ -116,24 +116,39 @@ const updateWebsite = async (req, res, next)=>{
                 }
                 break;
             case "5":
+                console.log(AssociatedPages)
                 await WebsiteMaster.findByIdAndUpdate(id,{
                     AssociatedPages:AssociatedPages,
                 })
                 break;
             case "6":
+                DesktopSSLength = JSON.parse( DesktopSSLength);
+                MobileSSLength =JSON.parse(MobileSSLength )
                 pageURL = JSON.parse(pageURL)
                 MyCategory = JSON.parse(MyCategory)
                 SubCategory = JSON.parse(SubCategory)
                 let filename = req.files;
                 console.log(filename)
                 if(filename.DesktopSS){
-                    for(let i = 0; i<filename.DesktopSS.length ;i++){
+                    console.log(DesktopSSLength)
+                    for(let i = 0; i<DesktopSSLength.length ;i=i+2){
+                        const Desktopchunk =[];
+                        const Mobilechunk = [];
+                        console.log(DesktopSSLength[i])
+                        console.log(DesktopSSLength[i+1])
+                        for(let j = DesktopSSLength[i];j < DesktopSSLength[i+1] ;j++){
+                            Desktopchunk.push("/public/WebsiteSS/"+filename.DesktopSS[j].originalname)
+                        }
+                        for(let j = MobileSSLength[i];j < MobileSSLength[i+1] ;j++){
+                            Mobilechunk.push("/public/WebsiteSS/"+filename.MobileSS[j].originalname)
+                        }
+
                         const toAdd = {
                             pageURL:pageURL[i],
                             Category:MyCategory[i],
                             SubCategory:SubCategory[i],
-                            DesktopSS:"/public/WebsiteSS/"+filename.DesktopSS[i].originalname,
-                            MobileSS:"/public/WebsiteSS/"+filename.MobileSS[i].originalname
+                            DesktopSS:Desktopchunk,
+                            MobileSS:Mobilechunk
                         }
                         website.AssociatedComponent.push(toAdd)
                         await website.save()
