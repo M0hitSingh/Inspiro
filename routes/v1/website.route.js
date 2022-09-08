@@ -11,7 +11,6 @@ const router = express.Router();
 router
     .route("/:id")
     .get(getWebsite)
-    .post(publishWebsite)
     .delete(softdeleteWebsite)
 router
     .route("/add")
@@ -19,5 +18,8 @@ router
 router
     .route("/update")
     .patch(upload.fields([{name:'MobileSS'},{name:'DesktopSS'}]),updateWebsite)
+router
+    .route("/save/:id")
+    .post(publishWebsite)
 
 module.exports = router;
