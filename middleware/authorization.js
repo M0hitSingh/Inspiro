@@ -28,8 +28,10 @@ const authorization = async (req, res, next) => {
         next();
     } catch (error) {
         let message;
+        let err
         if (error instanceof jwt.TokenExpiredError) {
             message = "Token Expired";
+
         } else {
             message = "Authentication failed invalid JWT";
         }

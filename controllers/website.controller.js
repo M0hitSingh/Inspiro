@@ -6,7 +6,8 @@ const User = require('../model/User');
 const WebsiteMaster = require('../model/WebsiteMaster');
 const FrameworkMaster = require('../model/FrameworkMaster')
 const Category = require("../model/categoryMaster")
-const Tag = require("../model/TagMaster")
+const Tag = require("../model/TagMaster");
+const TagMaster = require('../model/TagMaster');
 // const CategoryMaster = require('../model/CategoryMaster')
 
 
@@ -166,7 +167,39 @@ const updateWebsite = async (req, res, next)=>{
         next(createCustomError(err,400));
     }
 }
-
+const publishWebsite = async(req, res, next)=>{
+    try{
+        const id = req.params.id;
+        const website = await WebsiteMaster.findById(id);
+        console.log(website)
+        for(let i = 0 ; i < website.Tags.length; i++){
+            const tag = await TagMaster.findById(website.Tags[i].id)
+            tag.count++;
+            await tag.save()
+        }
+        for(let i = 0; i < website.Categorys.length; i++){
+            const category = await Category.findById(website.Categorys[i].id)
+            category.count++;
+            await category.save();
+        }
+        const type = await TypeMaster.findById(website.Type.id);
+        type.count++;
+        await type.save()
+        const frame = await FrameworkMaster.findById(website.Framework.id);
+        if(frame){
+            frame.count++;
+            await frame.save();
+        }
+        website.isActive = true;
+        await website.save()
+        const response = sendSuccessApiResponse(`Website pubished`)
+        res.status(200).json(response);
+    }
+    catch(err){
+        console.log(err)
+        next(createCustomError(err,400));
+    }
+}
 const getWebsite = async (req, res, next)=>{
     try{
         const id = req.params.id;
@@ -203,4 +236,4 @@ const softdeleteWebsite = async (req, res, next)=>{
     }
 }
 
-module.exports = {addWebsite, updateWebsite ,getWebsite , softdeleteWebsite}
+module.exports = {addWebsite, updateWebsite ,getWebsite ,publishWebsite, softdeleteWebsite}

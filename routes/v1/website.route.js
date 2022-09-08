@@ -1,5 +1,5 @@
 const express =  require("express");
-const  {addWebsite, getWebsite, updateWebsite, softdeleteWebsite} =  require('../../controllers/website.controller')
+const  {addWebsite, getWebsite, updateWebsite, softdeleteWebsite, publishWebsite} =  require('../../controllers/website.controller')
 const authorization = require("../../middleware/authorization");
 const upload = require("../../middleware/fileUpload");
 
@@ -11,6 +11,7 @@ const router = express.Router();
 router
     .route("/:id")
     .get(getWebsite)
+    .post(publishWebsite)
     .delete(softdeleteWebsite)
 router
     .route("/add")
