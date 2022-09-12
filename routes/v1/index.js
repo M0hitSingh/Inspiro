@@ -9,6 +9,7 @@ const pageRoute = require("./pagesMaster.route")
 const componentRoute = require('./componentMaster.route')
 const websiteRoute = require('./website.route')
 const fetchURIRoute = require('./fetchURI.route');
+const UserRoute = require('./user.route')
 
 
 const { authorization } = require("../../middleware/authorization");
@@ -27,6 +28,7 @@ router.use("/pages-master",authorization,pageRoute)
 router.use("/components-master",authorization,componentRoute)
 router.use("/website",authorization,websiteRoute)
 router.use("/fetch",authorization,fetchURIRoute);
+router.use("/user",authorization,UserRoute);
 
 router.get("/", (req, res) => {
     const response = sendSuccessApiResponse({ message: "Inspiro - V1 API is running" });
