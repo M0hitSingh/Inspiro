@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema(
             required: [true, "Please provide phone number"],
             trim: true,
         },
-        LinkedAccount:{
+        webURL :{
             type:String
         },
         gender: {
@@ -62,6 +62,9 @@ const userSchema = new mongoose.Schema(
                 values: ["Male", "Female", "Others"],
                 message: "Please choose from Male, Female or Others",
             },
+        },
+        location:{
+            type:String
         },
         role: {
             type:String,
@@ -75,6 +78,39 @@ const userSchema = new mongoose.Schema(
             type:schema.Types.ObjectId,
             ref:"WebsiteMaster"
         }],
+        profiles:{
+            Dribble:{
+                type:String
+            },
+            Behance:{
+                type:String
+            },
+            Instagram:{
+                type:String
+            },
+            CreativeMarket:{
+                type:String
+            },
+            Linkedin:{
+                type:String
+            },
+            ThemeForest:{
+                type:String
+            },
+            Codepen:{
+                type:String
+            },
+            Twitter:{
+                type:String
+            }
+        },
+        sendNewsletter:{
+            type:Boolean
+        },
+        canSubmit:{
+            type:Boolean,
+            default:true
+        },
         isVerified: {
             type:Boolean,
             default:false
