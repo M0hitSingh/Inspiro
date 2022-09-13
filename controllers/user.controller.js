@@ -36,7 +36,7 @@ const UpdateUser = asyncWrapper(async (req,res,next)=>{
     if(id.toString() != req.user.userId.toString() && isUser.role !=='Admin' ){
         return next(createCustomError(`${req.user.userId} is not Authorized`,401));
     }
-    await User.findByIdAndUpdate(req.user.userId,{
+    await User.findByIdAndUpdate(id,{
         firstName:firstName,
         lastName:lastName,
         email:email,
@@ -48,7 +48,7 @@ const UpdateUser = asyncWrapper(async (req,res,next)=>{
         canSubmit:canSubmit,
         profiles:profiles
     })
-    const data = await User.findById(req.user.userId);
+    const data = await User.findById(id);
     const response = sendSuccessApiResponse(data)
     res.status(200).json(response);
 })
