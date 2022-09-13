@@ -26,7 +26,7 @@ router.route("/login").post(loginUser);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password").patch(resetPassword);
 router.route("/otp-verify").post(otpValid); 
-router.route("/update-password").patch( updatePassword);
+router.route("/update-password").patch(updatePassword);
 
 
 

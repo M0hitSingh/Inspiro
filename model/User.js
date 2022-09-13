@@ -105,7 +105,8 @@ const userSchema = new mongoose.Schema(
             }
         },
         sendNewsletter:{
-            type:Boolean
+            type:Boolean,
+            default:true
         },
         canSubmit:{
             type:Boolean,

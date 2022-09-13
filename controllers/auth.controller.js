@@ -231,8 +231,9 @@ const resetPassword = async (req, res, next) => {
 const updatePassword = async (req, res, next) => {
     try{
         const { currentPassword, newPassword } = req.body;
-        const id = req.user.userId;
-        const user = await User.findOne({ isActive: true, _id: id ,isVerified:true});
+        const id = req.body.id;
+        console.log(id)
+        const user = await User.findOne({_id: id,isActive:true ,isVerified:true});
         if (!user) {
             const message = "There was an error finding the email";
             return next(createCustomError(message, 401));
