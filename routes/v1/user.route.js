@@ -12,7 +12,7 @@ router
     .get(getAllUser);
 
 router
-    .route("/")
+    .route("/:id")
     .get(getUser);
 router
     .route("/")
