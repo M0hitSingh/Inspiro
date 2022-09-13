@@ -3,6 +3,14 @@ const User = require("../model/User");
 const { createCustomError } = require('../errors/customAPIError');
 const APIFeatures = require('../util/APIfeature');
 const { sendSuccessApiResponse } = require('../middleware/successApiResponse');
+const getUser = asyncWrapper(async (req,res,next)=>{
+    const isUser = await User.findById(req.user.userId);
+    if(!isUser){
+        return next(createCustomError(`${req.user.userId} Not Found`,404));
+    }
+    const response = sendSuccessApiResponse(isUser)
+    res.status(200).json(response);
+})
 const getAllUser =  asyncWrapper(async (req, res, next)=>{
     const SearchString = ["Name"]
     const isAdmin =await User.findById(req.user.userId);
@@ -43,5 +51,4 @@ const UpdateUser = asyncWrapper(async (req,res,next)=>{
     const response = sendSuccessApiResponse(data)
     res.status(200).json(response);
 })
-
-module.exports = {getAllUser , UpdateUser}
+module.exports = {getAllUser , UpdateUser ,getUser}

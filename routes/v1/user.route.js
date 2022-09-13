@@ -1,5 +1,5 @@
 const express = require("express");
-const  {getAllUser, UpdateUser} = require("../../controllers/user.controller")
+const  {getAllUser, UpdateUser, getUser} = require("../../controllers/user.controller")
 
 
 /**
@@ -13,5 +13,6 @@ router
 
 router
     .route("/")
+    .get(getUser)
     .post(UpdateUser)
 module.exports = router;
