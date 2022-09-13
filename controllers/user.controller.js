@@ -33,7 +33,7 @@ const getAllUser =  asyncWrapper(async (req, res, next)=>{
 const UpdateUser = asyncWrapper(async (req,res,next)=>{
     const {id,firstName, lastName, email, role, webURL, location, isActive ,sendNewsletter , canSubmit , profiles} = req.body
     const isUser =await User.findById(id);
-    if(isUser._id.toString() != req.user.userId.toString() || isUser.role !=='Admin' ){
+    if(id.toString() != req.user.userId.toString() && isUser.role !=='Admin' ){
         return next(createCustomError(`${req.user.userId} is not Authorized`,401));
     }
     await User.findByIdAndUpdate(req.user.userId,{
