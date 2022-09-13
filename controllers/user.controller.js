@@ -4,7 +4,8 @@ const { createCustomError } = require('../errors/customAPIError');
 const APIFeatures = require('../util/APIfeature');
 const { sendSuccessApiResponse } = require('../middleware/successApiResponse');
 const getUser = asyncWrapper(async (req,res,next)=>{
-    const isUser = await User.findById(req.user.userId);
+    const user = req.params.id;
+    const isUser = await User.findById(user);
     if(!isUser){
         return next(createCustomError(`${req.user.userId} Not Found`,404));
     }

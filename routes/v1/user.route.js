@@ -13,6 +13,8 @@ router
 
 router
     .route("/")
-    .get(getUser)
+    .get(getUser);
+router
+    .route("/")
     .post(UpdateUser)
 module.exports = router;
