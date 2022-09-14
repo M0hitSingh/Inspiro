@@ -80,29 +80,47 @@ const userSchema = new mongoose.Schema(
         }],
         profiles:{
             Dribble:{
-                type:String
+                type:String,
+                default:""
             },
             Behance:{
-                type:String
+                type:String,
+                default:""
             },
             Instagram:{
-                type:String
+                type:String,
+                default:""
             },
             CreativeMarket:{
-                type:String
+                type:String,
+                default:""
             },
             Linkedin:{
-                type:String
+                type:String,
+                default:""
             },
             ThemeForest:{
-                type:String
+                type:String,
+                default:""
             },
             Codepen:{
-                type:String
+                type:String,
+                default:""
             },
             Twitter:{
-                type:String
+                type:String,
+                default:""
+            },
+            Github:{
+                type:String,
+                default:""
             }
+        },
+        passwordResetToken: {
+            type: String,
+        },
+        passwordResetExpires: {
+            type: Date,
         },
         sendNewsletter:{
             type:Boolean,

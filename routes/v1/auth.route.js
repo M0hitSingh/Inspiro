@@ -7,7 +7,8 @@ const {
     resetPassword,
     otpValid,
     updatePassword,
-    getUser
+    getUser,
+    resetPasswordLink
 } = require("../../controllers/auth.controller");
 const authorization = require("../../middleware/authorization");
 
@@ -24,9 +25,11 @@ router.route("/get-user").get(getUser);
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
 router.route("/forgot-password").post(forgotPassword);
-router.route("/reset-password").patch(resetPassword);
+router.route("/reset-password/:token").patch(resetPassword)
+router.route("/reset-password").post(resetPasswordLink)
 router.route("/otp-verify").post(otpValid); 
 router.route("/update-password").patch(updatePassword);
+
 
 
 

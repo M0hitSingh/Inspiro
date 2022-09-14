@@ -7,8 +7,12 @@ const { createCustomError } = require("../errors/customAPIError");
 const { sendSuccessApiResponse } = require("../middleware/successApiResponse");
 const Otp = require("../model/Otp");
 const User = require("../model/User")
-const sendEmail = require("../util/email")
+const sendEmail = require("../util/email");
+const asyncWrapper = require("../util/asyncWrapper");
 
+const addMinutes = (date, minutes) => {
+    return new Date(date.getTime() + minutes * 60000);
+}
 
 const refreshToken= async (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -213,10 +217,17 @@ const otpValid = async (req, res, next) => {
 const resetPassword = async (req, res, next) => {
     try{
         const {email , password} = req.body;
-
+        const token = req.params.token;
         const user = await User.findOne({email:email});
+        console.log(user)
         if (!user) {
             const message = "No User exist";
+            return next(createCustomError(message));
+        }
+        const reset = await User.findOne({_id:user.id,passwordResetToken:token,passwordResetExpires: { $gt: Date.now() }})
+        console.log(reset)
+        if (!reset) {
+            const message = "Invalid token or Session expired";
             return next(createCustomError(message));
         }
         user.password = password;
@@ -227,6 +238,37 @@ const resetPassword = async (req, res, next) => {
         return createCustomError(err,400);
     }
 };
+
+const resetPasswordLink = asyncWrapper(async (req, res, next)=>{
+    const email = req.body.email;
+    const user = await User.findOne({ email, isActive: true });
+    if (!user) {
+        const message = `No user found with the email: ${email}`;
+        return next(createCustomError(message, 400));
+    }
+    try{
+        const resetToken = user.createPasswordResetToken();
+        const resetURL = `${req.protocol}://golchi.azurewebsites.net/api/v1/auth/reset-password/${resetToken}`;
+        const message = `Forgot your password? Submit a request with your new password to \n ${resetURL}`;
+        await sendEmail({
+            email: email,
+            subject: "Your password reset token (Valid for 10 minutes)",
+            message,
+        });
+        await User.findByIdAndUpdate(user._id, {
+            passwordResetToken: resetToken,
+            passwordResetExpires: addMinutes(new Date(), 10),
+        });
+        const response = sendSuccessApiResponse(resetURL);
+        res.status(200).json(response)
+    }
+    catch(err){
+
+        user.passwordResetExpires = undefined;
+        user.passwordResetToken = undefined;
+        return next(createCustomError(err));
+    }
+})
 
 const updatePassword = async (req, res, next) => {
     try{
@@ -267,5 +309,6 @@ module.exports = {
     otpValid,
     updatePassword,
     refreshToken,
-    getUser
+    getUser,
+    resetPasswordLink
 };
