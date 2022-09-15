@@ -13,7 +13,7 @@ const getUser = asyncWrapper(async (req,res,next)=>{
     res.status(200).json(response);
 })
 const getAllUser =  asyncWrapper(async (req, res, next)=>{
-    const SearchString = ["Name"]
+    const SearchString = ["firstName","lastName"]
     const isAdmin =await User.findById(req.user.userId);
     if(isAdmin.role !='Admin'){
         return next(createCustomError(`${req.user.userId} is not Admin`,401));
@@ -52,4 +52,19 @@ const UpdateUser = asyncWrapper(async (req,res,next)=>{
     const response = sendSuccessApiResponse(data)
     res.status(200).json(response);
 })
-module.exports = {getAllUser , UpdateUser ,getUser}
+const uploadAvatar = asyncWrapper(async (req, res, next)=>{
+    const id = req.params.id;
+    let filename = req.files;
+    if(filename){
+        await User.findByIdAndUpdate(id,{
+            avatar:"/public/WebsiteSS/"+filename.avatar[0].originalname
+        })
+        const user = await User.findById(id)
+        const response = sendSuccessApiResponse(user)
+        res.status(200).json(response);
+    }
+    else{
+        return next(createCustomError("Could Not upload",402));
+    }
+})
+module.exports = {getAllUser , UpdateUser ,getUser, uploadAvatar}

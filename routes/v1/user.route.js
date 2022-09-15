@@ -1,5 +1,6 @@
 const express = require("express");
-const  {getAllUser, UpdateUser, getUser} = require("../../controllers/user.controller")
+const  {getAllUser, UpdateUser, getUser, uploadAvatar} = require("../../controllers/user.controller");
+const upload = require("../../middleware/fileUpload");
 
 
 /**
@@ -17,4 +18,8 @@ router
 router
     .route("/")
     .post(UpdateUser)
+router
+    .route("/profile-upload/:id")
+    .post(upload.fields([{name:'avatar'}]),uploadAvatar)
+    
 module.exports = router;
