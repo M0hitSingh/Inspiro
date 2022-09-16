@@ -269,7 +269,34 @@ const resetPasswordLink = asyncWrapper(async (req, res, next)=>{
         return next(createCustomError(err));
     }
 })
-
+const EmailActivationLink = asyncWrapper(async (req,res,next)=>{
+    const id = req.body.id;
+    const email = req.body.email
+    const isUser = await User.findById(id);
+    const token = jwt.sign({email:email,userId:id},process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRATION})
+    // const token = isUser.generateJWT()
+    const resetURL = `${req.protocol}://${process.env.URL}/api/v1/auth/activate-email/${token}`;
+    const message = `Click on below link to verify this email \n ${resetURL}`;
+    await sendEmail({
+        email: email,
+        subject: "Your email activation link (Valid for 10 minutes)",
+        message,
+    });
+    const response = sendSuccessApiResponse(resetURL);
+    res.status(200).json(response)
+})
+const activateEmail = asyncWrapper(async (req,res,next)=>{
+    const token = req.params.token;
+    const payload =await jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findOne({ isActive: true, _id: payload.userId ,isVerified:true});
+    if (!user) {
+        return next(createCustomError("Invalid Token"));
+    }
+    user.email = payload.email;
+    await user.save();
+    const response = sendSuccessApiResponse(user);
+    res.status(200).json(response)
+})
 const updatePassword = async (req, res, next) => {
     try{
         const { currentPassword, newPassword } = req.body;
@@ -310,5 +337,7 @@ module.exports = {
     updatePassword,
     refreshToken,
     getUser,
-    resetPasswordLink
+    resetPasswordLink,
+    EmailActivationLink,
+    activateEmail
 };

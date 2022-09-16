@@ -29,7 +29,18 @@ const getAllUser =  asyncWrapper(async (req, res, next)=>{
     const response = sendSuccessApiResponse({data,getCount})
     res.status(200).json(response);
 })
-
+const   deleteUser = asyncWrapper(async (req,res,next)=>{
+    const id = req.params.id;
+    const isAdmin =await User.findById(req.user.userId);
+    if(isAdmin.role !='Admin'){
+        return next(createCustomError(`${req.user.userId} is not Admin`,401));
+    }
+    const user = await User.findById(id);
+    user.isActive = false;
+    await user.save();
+    const response = sendSuccessApiResponse(user)
+    res.status(200).json(response);
+})
 const UpdateUser = asyncWrapper(async (req,res,next)=>{
     const {id,firstName, lastName, email, role, webURL, location, isActive ,sendNewsletter , canSubmit , profiles} = req.body
     const isUser =await User.findById(id);
@@ -67,4 +78,4 @@ const uploadAvatar = asyncWrapper(async (req, res, next)=>{
         return next(createCustomError("Could Not upload",402));
     }
 })
-module.exports = {getAllUser , UpdateUser ,getUser, uploadAvatar}
+module.exports = {getAllUser , UpdateUser ,getUser, uploadAvatar, deleteUser}

@@ -1,5 +1,5 @@
 const express = require("express");
-const  {getAllUser, UpdateUser, getUser, uploadAvatar} = require("../../controllers/user.controller");
+const  {getAllUser, UpdateUser, getUser, uploadAvatar, deleteUser} = require("../../controllers/user.controller");
 const upload = require("../../middleware/fileUpload");
 
 
@@ -14,7 +14,8 @@ router
 
 router
     .route("/:id")
-    .get(getUser);
+    .get(getUser)
+    .delete(deleteUser)
 router
     .route("/")
     .post(UpdateUser)

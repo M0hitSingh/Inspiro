@@ -8,7 +8,9 @@ const {
     otpValid,
     updatePassword,
     getUser,
-    resetPasswordLink
+    resetPasswordLink,
+    EmailActivationLink,
+    activateEmail
 } = require("../../controllers/auth.controller");
 const authorization = require("../../middleware/authorization");
 
@@ -29,6 +31,9 @@ router.route("/reset-password/:token").get(resetPassword)
 router.route("/reset-password").post(resetPasswordLink)
 router.route("/otp-verify").post(otpValid); 
 router.route("/update-password").patch(updatePassword);
+router.route("/activate-email").post(EmailActivationLink)
+router.route("/activate-email/:token").get(activateEmail)
+    
 
 
 
