@@ -17,13 +17,15 @@ const addWebsite = async(req, res, next)=>{
             url,
             Colors,
             FontFamily,
+            autoFetchDesktop,
+            autoFetchMobile
         } = req.body
         const isWebsite = await WebsiteMaster.findOne({url:url});
         // console.log(isWebsite)
         if(isWebsite){
             const result = await User.find({_id:req.user.userId,Websites:mongoose.Types.ObjectId(isWebsite._id)});
             console.log(result)
-            if(result.length) return res.json("This user");
+            if(result.length) return res.json(result);
             else  return  next(createCustomError("Website Already Exist",400));
         }
         const website = await WebsiteMaster.create({url:url})
@@ -38,7 +40,8 @@ const addWebsite = async(req, res, next)=>{
                 website.MobileSS.push("/public/WebsiteSS/"+filename.MobileSS[i].originalname)
             }
         }
-        website.step1 = true;
+        if(autoFetchDesktop.length) website.DesktopSS.push(autoFetchDesktop);
+        if(autoFetchMobile) website.MobileSS.push(autoFetchDesktop);
         website.Colors = Colors;
         website.FontFamily = FontFamily;
         const isUser = await User.findById(req.user.userId);

@@ -248,7 +248,7 @@ const resetPasswordLink = asyncWrapper(async (req, res, next)=>{
     }
     try{
         const resetToken = user.createPasswordResetToken();
-        const resetURL = `${req.protocol}://golchi.azurewebsites.net/api/v1/auth/reset-password/${resetToken}`;
+        const resetURL = `${req.protocol}://${process.env.URL}/api/v1/auth/reset-password/${resetToken}`;
         const message = `Forgot your password? Submit a request with your new password to \n ${resetURL}`;
         await sendEmail({
             email: email,

@@ -29,7 +29,7 @@ const fetchURI = async(req ,res ,next)=>{
               fullPage: (type=='mobile')? false : true
             });
             await browser.close();
-            res.json(`http://localhost:8080/public/${filename}.png`)
+            res.json(`${req.protocol}://${process.env.URL}/public/${filename}.png`)
         },1500); 
     }
     catch(err){
