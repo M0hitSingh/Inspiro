@@ -2,7 +2,7 @@ const { response } = require("express");
 const { createCustomError } = require("../errors/customAPIError")
 const { sendSuccessApiResponse } = require("../middleware/successApiResponse")
 const APIFeatures = require('../util/APIfeature');
-const Category = require("../model/categoryMaster")
+const Category = require("../model/CategoryMaster")
 
 const getAllCategory = async(req ,res, next)=>{
     try{

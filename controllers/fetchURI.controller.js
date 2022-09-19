@@ -15,14 +15,14 @@ const fetchURI = async(req ,res ,next)=>{
         });
         const dimensions = await page.evaluate(() => {
           return {
-            width: document.body.scrollWidth,
+            width: 1920,
             height: document.body.scrollHeight,
           };
         });
         setTimeout(async() => {
             console.log(dimensions.height)
             const filename = Date.now()+''
-            page.setViewport({ width: (type=='mobile')? 480 :  dimensions.width, height: dimensions.height })
+            page.setViewport({ width: (type=='mobile')? 425 :  dimensions.width, height: dimensions.height })
             await page.screenshot({
               path: path.join(__dirname ,`../public/`,`${filename}`) +".png",
               type:"png",

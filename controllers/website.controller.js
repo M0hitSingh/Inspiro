@@ -5,7 +5,7 @@ const TypeMaster = require('../model/TypeMaster');
 const User = require('../model/User');
 const WebsiteMaster = require('../model/WebsiteMaster');
 const FrameworkMaster = require('../model/FrameworkMaster')
-const Category = require("../model/categoryMaster")
+const Category = require("../model/CategoryMaster")
 const Tag = require("../model/TagMaster");
 const TagMaster = require('../model/TagMaster');
 
@@ -126,6 +126,8 @@ const updateWebsite = async (req, res, next)=>{
                 })
                 break;
             case "6":
+                website.AssociatedComponent = [];
+                await website.save();
                 DesktopSSLength = JSON.parse( DesktopSSLength);
                 MobileSSLength =JSON.parse(MobileSSLength )
                 pageURL = JSON.parse(pageURL)
