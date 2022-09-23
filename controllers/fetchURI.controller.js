@@ -2,24 +2,26 @@ const { createCustomError } = require("../errors/customAPIError")
 const path = require('path')
 const puppeteer = require('puppeteer')
 const fetchURI = async(req ,res ,next)=>{
+  const uri = req.body.uri
+  const type = req.body.type
+  const browser = await puppeteer.launch({
+    headless:true,
+    args: ["--no-sandbox"]
+  });
     try{
-        const uri = req.body.uri
-        const type = req.body.type
-        const browser = await puppeteer.launch({
-          headless:true,
-          args: ["--no-sandbox"]
-        });
         const page = await browser.newPage();
+        console.log('open page')
         await page.goto(`${uri}`,{
           waitUntil:'networkidle2'
         });
+        console.log('going to url')
         const dimensions = await page.evaluate(() => {
           return {
             width: 1920,
             height: document.body.scrollHeight,
           };
         });
-        setTimeout(async() => {
+    
             console.log(dimensions.height)
             const filename = Date.now()+''
             page.setViewport({ width: (type=='mobile')? 425 :  dimensions.width, height: dimensions.height })
@@ -28,11 +30,14 @@ const fetchURI = async(req ,res ,next)=>{
               type:"png",
               fullPage: (type=='mobile')? false : true
             });
+            await page.close();
+            console.log('page close')
+            res.json(`/public/${filename}.png`)
             await browser.close();
-            res.json(`${req.protocol}://${process.env.URL}/public/${filename}.png`)
-        },1500); 
+  
     }
     catch(err){
+      await browser.close();
         next(createCustomError(err,400));
     }
 }

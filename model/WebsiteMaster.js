@@ -60,10 +60,10 @@ const WebsiteMasterSchema = new mongoose.Schema(
         }],
         AssociatedPages:[{
             Category:{
-                id:{
+                value:{
                     type:schema.Types.ObjectId
                 },
-                Name:{
+                label:{
                     type:String
                 }
             },
@@ -76,18 +76,18 @@ const WebsiteMasterSchema = new mongoose.Schema(
                 type:String
             },
             Category:{
-                id:{
+                value:{
                     type:schema.Types.ObjectId
                 },
-                Name:{
+                label:{
                     type:String
                 }
             },
             SubCategory:{
-                id:{
+                value:{
                     type:schema.Types.ObjectId
                 },
-                Name:{
+                label:{
                     type:String
                 }
             },

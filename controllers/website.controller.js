@@ -20,16 +20,37 @@ const addWebsite = async(req, res, next)=>{
             autoFetchDesktop,
             autoFetchMobile
         } = req.body
+        let filename = req.files;
         const isWebsite = await WebsiteMaster.findOne({url:url});
-        // console.log(isWebsite)
+        console.log(isWebsite)
         if(isWebsite){
-            const result = await User.find({_id:req.user.userId,Websites:mongoose.Types.ObjectId(isWebsite._id)});
-            console.log(result)
-            if(result.length) return res.json(result);
+            const result = await User.findOne({_id:req.user.userId,Websites:mongoose.Types.ObjectId(isWebsite._id)});
+            // console.log(result)
+            if(result){
+                isWebsite.Colors = Colors;
+                isWebsite.FontFamily = FontFamily;
+                isWebsite.DesktopSS = [];
+                isWebsite.MobileSS = [];
+                await isWebsite.save();
+                if(filename.DesktopSS){
+                    for(let i = 0; i<filename.DesktopSS.length ;i++){
+                        isWebsite.DesktopSS.push("/public/WebsiteSS/"+filename.DesktopSS[i].originalname)
+                    }
+                }
+                if(filename.MobileSS){
+                    for(let i = 0; i<filename.MobileSS.length ;i++){
+                        isWebsite.MobileSS.push("/public/WebsiteSS/"+filename.MobileSS[i].originalname)
+                    }
+                }
+                if(autoFetchDesktop) isWebsite.DesktopSS.push(autoFetchDesktop);
+                if(autoFetchMobile) isWebsite.MobileSS.push(autoFetchMobile);
+                await isWebsite.save();
+                return res.json(isWebsite);
+            }
             else  return  next(createCustomError("Website Already Exist",400));
         }
         const website = await WebsiteMaster.create({url:url})
-        let filename = req.files;
+        console.log(filename)
         if(filename.DesktopSS){
             for(let i = 0; i<filename.DesktopSS.length ;i++){
                 website.DesktopSS.push("/public/WebsiteSS/"+filename.DesktopSS[i].originalname)
@@ -39,9 +60,10 @@ const addWebsite = async(req, res, next)=>{
             for(let i = 0; i<filename.MobileSS.length ;i++){
                 website.MobileSS.push("/public/WebsiteSS/"+filename.MobileSS[i].originalname)
             }
+            await website.save();
         }
-        if(autoFetchDesktop.length) website.DesktopSS.push(autoFetchDesktop);
-        if(autoFetchMobile) website.MobileSS.push(autoFetchDesktop);
+        if(autoFetchDesktop) website.DesktopSS.push(autoFetchDesktop);
+        if(autoFetchMobile) website.MobileSS.push(autoFetchMobile);
         website.Colors = Colors;
         website.FontFamily = FontFamily;
         const isUser = await User.findById(req.user.userId);
@@ -61,7 +83,7 @@ const updateWebsite = async (req, res, next)=>{
         let {
             id,
             url,
-            DesktopSSLength,
+            uploadedurl,
             MobileSSLength,
             Colors,
             FontFamily,
@@ -102,69 +124,85 @@ const updateWebsite = async (req, res, next)=>{
                 }
                 break;
             case "3":
-                await WebsiteMaster.findByIdAndUpdate(id,{
-                    Categorys:Categorys,
-                })
+                for(let i = 0; i < Categorys.length ; i++){
+                    const isCategory = await WebsiteMaster.findOne({_id:id,Categorys:Categorys[i]})
+                    if(!isCategory) await WebsiteMaster.findOneAndUpdate({_id:id},{$push:{Categorys:Categorys[i]}})
+                }
                 for(let i = 0; i < Categorys.length ; i++){
                     const isCategory = await Category.findOne({_id:Categorys[i].id,Websites:id})
                     if(!isCategory) await Category.findOneAndUpdate({_id:Categorys[i].id},{$push:{Websites:id}})
                 }
                 break;
             case "4":
-                await WebsiteMaster.findByIdAndUpdate(id,{
-                    Tags:Tags,
-                })
+                for(let i = 0; i < Tags.length ; i++){
+                    const isTag = await WebsiteMaster.findOne({_id:id,Tags:Tags[i]})
+                    if(!isTag) await WebsiteMaster.findOneAndUpdate({_id:id},{$push:{Tags:Tags[i]}})
+                }
                 for(let i = 0; i < Tags.length ; i++){
                     const isTag = await Tag.findOne({_id:Tags[i].id,Websites:id})
                     if(!isTag) await Tag.findOneAndUpdate({_id:Tags[i].id},{$push:{Websites:id}})
                 }
                 break;
             case "5":
-                console.log(AssociatedPages)
-                await WebsiteMaster.findByIdAndUpdate(id,{
-                    AssociatedPages:AssociatedPages,
-                })
+                for(let i = 0; i < AssociatedPages.length ; i++){
+                    const isPage = await WebsiteMaster.findOne({_id:id,AssociatedPages:AssociatedPages[i]})
+                    if(!isPage) await WebsiteMaster.findOneAndUpdate({_id:id},{$push:{AssociatedPages:AssociatedPages[i]}})
+                }
                 break;
             case "6":
                 website.AssociatedComponent = [];
                 await website.save();
-                DesktopSSLength = JSON.parse( DesktopSSLength);
-                MobileSSLength =JSON.parse(MobileSSLength )
                 pageURL = JSON.parse(pageURL)
                 MyCategory = JSON.parse(MyCategory)
                 SubCategory = JSON.parse(SubCategory)
+                uploadedurl = JSON.parse(uploadedurl);
                 let filename = req.files;
                 console.log(filename)
+                let i = 0;
+                let k = uploadedurl.length/2;
+
+                for(i=0 ,j=0 ; i< uploadedurl.length ; i=i+2,j++){
+                    const toAdd = {
+                        pageURL:pageURL[j],
+                        Category:MyCategory[j],
+                        SubCategory:SubCategory[j],
+                        DesktopSS:uploadedurl[i],
+                        MobileSS:uploadedurl[i+1]
+                    }
+                    website.AssociatedComponent.push(toAdd)
+                    await website.save()
+                }
                 if(filename.DesktopSS){
-                    console.log(DesktopSSLength)
-                    for(let i = 0; i<DesktopSSLength.length ;i=i+2){
-                        const Desktopchunk =[];
-                        const Mobilechunk = [];
-                        console.log(DesktopSSLength[i])
-                        console.log(DesktopSSLength[i+1])
-                        for(let j = DesktopSSLength[i];j < DesktopSSLength[i+1] ;j++){
-                            Desktopchunk.push("/public/WebsiteSS/"+filename.DesktopSS[j].originalname)
-                        }
-                        for(let j = MobileSSLength[i];j < MobileSSLength[i+1] ;j++){
-                            Mobilechunk.push("/public/WebsiteSS/"+filename.MobileSS[j].originalname)
-                        }
+                    for(i = 0 ; i< (filename.DesktopSS.length);i++){
+                        // const Desktopchunk =[];
+                        // const Mobilechunk = [];
+                        // console.log(DesktopSSLength[i])
+                        // console.log(DesktopSSLength[i+1])
+                        // for(let j = DesktopSSLength[i];j < DesktopSSLength[i+1] ;j++){
+                        //     Desktopchunk.push("/public/WebsiteSS/"+filename.DesktopSS[i].originalname)
+                        // // }
+                        // // for(let j = MobileSSLength[i];j < MobileSSLength[i+1] ;j++){
+                        //     Mobilechunk.push("/public/WebsiteSS/"+filename.MobileSS[i+1].originalname)
+                        // // }
 
                         const toAdd = {
-                            pageURL:pageURL[i],
-                            Category:MyCategory[i],
-                            SubCategory:SubCategory[i],
-                            DesktopSS:Desktopchunk,
-                            MobileSS:Mobilechunk
+                            pageURL:pageURL[i+k],
+                            Category:MyCategory[i+k],
+                            SubCategory:SubCategory[i +k],
+                            DesktopSS:"/public/WebsiteSS/"+filename.DesktopSS[i].originalname,
+                            MobileSS:"/public/WebsiteSS/"+filename.MobileSS[i].originalname
                         }
+
                         website.AssociatedComponent.push(toAdd)
                         await website.save()
+                        // console.log(website.AssociatedComponent); 
                     }
                 }
                 break;
             default:
                 return next(createCustomError("Step Not defined",400));
         }
-        const response = sendSuccessApiResponse(`Updated Step${step}`)
+        const response = sendSuccessApiResponse(website)
         res.status(200).json(response);
     }
     catch(err){
@@ -219,7 +257,20 @@ const getWebsite = async (req, res, next)=>{
         next(createCustomError(err,400));
     }
 }
-
+const geUrltWebsite = async (req, res, next)=>{
+    try{
+        const url = req.body.url;
+        const website = await WebsiteMaster.find({url:url}) 
+        if(!website){
+            return next(createCustomError("Not Found",404));
+        }
+        const response = sendSuccessApiResponse(website);
+        res.status(200).json(response);
+    }
+    catch(err){
+        next(createCustomError(err,400));
+    }
+}
 const softdeleteWebsite = async (req, res, next)=>{
     try{
         const id = req.params.id;
@@ -241,4 +292,4 @@ const softdeleteWebsite = async (req, res, next)=>{
     }
 }
 
-module.exports = {addWebsite, updateWebsite ,getWebsite ,publishWebsite, softdeleteWebsite}
+module.exports = {addWebsite, updateWebsite ,getWebsite,geUrltWebsite ,publishWebsite, softdeleteWebsite}
