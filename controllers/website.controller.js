@@ -8,6 +8,7 @@ const FrameworkMaster = require('../model/FrameworkMaster')
 const Category = require("../model/CategoryMaster")
 const Tag = require("../model/TagMaster");
 const TagMaster = require('../model/TagMaster');
+const APIFeatures = require('../util/APIfeature');
 
 
 
@@ -291,5 +292,27 @@ const softdeleteWebsite = async (req, res, next)=>{
         next(createCustomError(err,400));
     }
 }
-
-module.exports = {addWebsite, updateWebsite ,getWebsite,geUrltWebsite ,publishWebsite, softdeleteWebsite}
+const getAllWebsite = async(req ,res , user)=>{
+    try{
+        console.log(1); 
+        const SearchString = ["url"]
+        const isAdmin =await User.findById(req.user.userId);
+        if(isAdmin.role !='Admin'){
+            return next(createCustomError(`${req.user.userId} is not Admin`,401));
+        }
+        const query = new APIFeatures(WebsiteMaster.find({isActive:true}),req.query)
+        .filter()
+        .sort()
+        .page()
+        .limit()
+        .search(SearchString);
+        const data = await query.query;
+        const getCount = await WebsiteMaster.countDocuments({isActive:true});
+        const response = sendSuccessApiResponse({data,getCount});
+        res.status(200).json(response);
+    }
+    catch(err){
+        next(createCustomError(err,400));
+    }
+}
+module.exports = {addWebsite, updateWebsite,getAllWebsite ,getWebsite,geUrltWebsite ,publishWebsite, softdeleteWebsite}

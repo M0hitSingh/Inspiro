@@ -21,7 +21,7 @@ const fetchURI = async(req ,res ,next)=>{
             height: document.body.scrollHeight,
           };
         });
-    
+
             console.log(dimensions.height)
             const filename = Date.now()+''
             page.setViewport({ width: (type=='mobile')? 425 :  dimensions.width, height: dimensions.height })
@@ -30,13 +30,14 @@ const fetchURI = async(req ,res ,next)=>{
               type:"png",
               fullPage: (type=='mobile')? false : true
             });
-            await page.close();
+
             console.log('page close')
             res.json(`/public/${filename}.png`)
             await browser.close();
-  
+
     }
     catch(err){
+            console.log(err)
       await browser.close();
         next(createCustomError(err,400));
     }

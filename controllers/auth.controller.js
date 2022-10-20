@@ -241,7 +241,7 @@ const resetPassword = async (req, res, next) => {
 
 const resetPasswordLink = asyncWrapper(async (req, res, next)=>{
     const email = req.body.email;
-    const user = await User.findOne({ email, isActive: true });
+    const user = await User.findOne({ email:email, isActive: true });
     if (!user) {
         const message = `No user found with the email: ${email}`;
         return next(createCustomError(message, 400));

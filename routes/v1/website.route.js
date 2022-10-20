@@ -1,5 +1,5 @@
 const express =  require("express");
-const  {addWebsite, getWebsite, updateWebsite, softdeleteWebsite, publishWebsite, geUrltWebsite} =  require('../../controllers/website.controller')
+const  {addWebsite,getAllWebsite, getWebsite, updateWebsite, softdeleteWebsite, publishWebsite, geUrltWebsite} =  require('../../controllers/website.controller')
 const authorization = require("../../middleware/authorization");
 const upload = require("../../middleware/fileUpload");
 
@@ -8,6 +8,9 @@ const upload = require("../../middleware/fileUpload");
  */
 const router = express.Router();
 
+router
+    .route("/all")
+    .get(getAllWebsite);
 router
     .route("/url")
     .post(geUrltWebsite);

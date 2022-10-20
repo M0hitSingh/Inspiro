@@ -18,14 +18,14 @@ const getAllUser =  asyncWrapper(async (req, res, next)=>{
     if(isAdmin.role !='Admin'){
         return next(createCustomError(`${req.user.userId} is not Admin`,401));
     }
-    const query = new APIFeatures(User.find(),req.query)
+    const query = new APIFeatures(User.find({isActive:true}),req.query)
     .filter()
     .sort()
     .page()
     .limit()
     .search(SearchString)
     const data = await query.query;
-    const getCount = await User.countDocuments();
+    const getCount = await User.countDocuments({isActive:true});
     const response = sendSuccessApiResponse({data,getCount})
     res.status(200).json(response);
 })
