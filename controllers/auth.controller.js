@@ -105,30 +105,29 @@ const registerUser = async (req, res, next) => {
             const message = "Email is already registered";
             return next(createCustomError(message, 406));
         }
-    
-        const phoneNumberisActive = await User.findOne({ phoneNumber, isActive: true , isVerified:true});
-    
-        if (phoneNumberisActive) {
-            const message = "Phone number is already registered";
-            return next(createCustomError(message, 406));
-        }
+        console.log(1);
+        console.log(2)
         const OTPgen = otpGenrator.generate(5,{
             digits:true, lowerCaseAlphabets : false, upperCaseAlphabets:false,
             specialChars:false
         })
+        console.log(3)
         const OTP = await Otp.updateOne({email:email},{email:email , otp:OTPgen},{upsert:true});
         await sendEmail({
             email: email,
             subject: "Your OTP (Valid for 5 minutes)",
             message:`Your One Time Password is ${OTPgen}`
         });
+        console.log(4)
         const notVerifiedUser = await User.find({email:email});
         if(notVerifiedUser.length){
+        console.log(6)
             res.status(200).json(sendSuccessApiResponse(notVerifiedUser,200));
         }
         else{
             const user = await User.create(toStore);
-            res.status(201).json(sendSuccessApiResponse(data, 201));
+        console.log(user)
+            res.status(201).json(user);
         }
     }
     catch(err){
@@ -216,17 +215,19 @@ const otpValid = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
     try{
-        const {email , password} = req.body;
-        const token = req.params.token;
+        const email = req.body.email;
+        const password = req.body.password
         const user = await User.findOne({email:email});
         console.log(user)
         if (!user) {
             const message = "No User exist";
             return next(createCustomError(message));
         }
-        const reset = await User.findOne({_id:user.id,passwordResetToken:token,passwordResetExpires: { $gt: Date.now() }})
-        console.log(reset)
-        if (!reset) {
+        const payload = await jwt.verify(user.passwordResetToken, process.env.JWT_SECRET);
+        console.log(payload);
+        console.log(payload.email)
+        // const reset = await User.findOne({_id:user.id,passwordResetToken:token,passwordResetExpires: { $gt: Date.now() }})
+        if (payload.userId!=user._id) {
             const message = "Invalid token or Session expired";
             return next(createCustomError(message));
         }
@@ -239,6 +240,8 @@ const resetPassword = async (req, res, next) => {
     }
 };
 
+
+
 const resetPasswordLink = asyncWrapper(async (req, res, next)=>{
     const email = req.body.email;
     const user = await User.findOne({ email:email, isActive: true });
@@ -247,7 +250,7 @@ const resetPasswordLink = asyncWrapper(async (req, res, next)=>{
         return next(createCustomError(message, 400));
     }
     try{
-        const resetToken = user.createPasswordResetToken();
+        const resetToken = user.generateJWT();
         const resetURL = `${req.protocol}://${process.env.URL}/api/v1/auth/reset-password/${resetToken}`;
         const message = `Forgot your password? Submit a request with your new password to \n ${resetURL}`;
         await sendEmail({
@@ -255,10 +258,8 @@ const resetPasswordLink = asyncWrapper(async (req, res, next)=>{
             subject: "Your password reset token (Valid for 10 minutes)",
             message,
         });
-        await User.findByIdAndUpdate(user._id, {
-            passwordResetToken: resetToken,
-            passwordResetExpires: addMinutes(new Date(), 10),
-        });
+        user.passwordResetToken = resetToken;
+        await user.save()
         const response = sendSuccessApiResponse(resetURL);
         res.status(200).json(response)
     }

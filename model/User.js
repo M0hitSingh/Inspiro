@@ -1,6 +1,6 @@
 const bcrypt =  require("bcryptjs");
 const crypto = require('crypto')
-const  jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const mongoose = require("mongoose")
 const schema = mongoose.Schema;
 const expression = { isActive: { $eq: true } };
@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema(
         },
         phoneNumber: {
             type: String,
-            required: [true, "Please provide phone number"],
+            required: [false, "Please provide phone number"],
             trim: true,
         },
         webURL :{
@@ -57,7 +57,7 @@ const userSchema = new mongoose.Schema(
         },
         gender: {
             type: String,
-            required: [true, "Please provide gender"],
+            required: [false, "Please provide gender"],
             enum: {
                 values: ["Male", "Female", "Others"],
                 message: "Please choose from Male, Female or Others",
@@ -118,6 +118,7 @@ const userSchema = new mongoose.Schema(
         },
         passwordResetToken: {
             type: String,
+            default:""
         },
         passwordResetExpires: {
             type: Date,
@@ -132,7 +133,7 @@ const userSchema = new mongoose.Schema(
         },
         isVerified: {
             type:Boolean,
-            default:false
+            default:true
         },
         avatar: {
             type: String,

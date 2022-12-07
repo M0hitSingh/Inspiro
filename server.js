@@ -2,6 +2,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const express = require("express");
 const mongoose = require('mongoose')
+const passport = require("passport");
 const httpContext = require("express-http-context");
 const notFound = require("./errors/notFound");
 const path = require('path')
@@ -15,11 +16,11 @@ const corsOptions = {
     preflightContinue: false,
     optionsSuccessStatus: 204,
 };
-
 // Load environment variables
 dotenv.config();
 // Create Express server
 const app = express();
+
 
 //public 
 app.use('/public',express.static('public'))

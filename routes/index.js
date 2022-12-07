@@ -4,7 +4,7 @@ const routerV1 = require("./v1");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-    res.send("VAVO API server is running!!!");
+    res.send("INSPIRO API server is running!!!");
 });
 
 router.use("/api/v1", routerV1);
