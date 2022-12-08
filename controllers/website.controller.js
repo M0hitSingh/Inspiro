@@ -315,4 +315,8 @@ const getAllWebsite = async(req ,res , user)=>{
         next(createCustomError(err,400));
     }
 }
-module.exports = {addWebsite, updateWebsite,getAllWebsite ,getWebsite,geUrltWebsite ,publishWebsite, softdeleteWebsite}
+
+
+
+
+module.exports = {addWebsite, updateWebsite,getAllWebsite ,getWebsite,geUrltWebsite ,publishWebsite, softdeleteWebsite,}
