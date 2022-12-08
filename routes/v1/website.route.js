@@ -27,5 +27,7 @@ router
 router
     .route("/save/:id")
     .post(publishWebsite)
+router
+    .route("/search")
 
 module.exports = router;

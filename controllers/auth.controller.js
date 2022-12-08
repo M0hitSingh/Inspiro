@@ -105,30 +105,19 @@ const registerUser = async (req, res, next) => {
             const message = "Email is already registered";
             return next(createCustomError(message, 406));
         }
-        console.log(1);
-        console.log(2)
-        const OTPgen = otpGenrator.generate(5,{
-            digits:true, lowerCaseAlphabets : false, upperCaseAlphabets:false,
-            specialChars:false
-        })
-        console.log(3)
-        const OTP = await Otp.updateOne({email:email},{email:email , otp:OTPgen},{upsert:true});
-        await sendEmail({
-            email: email,
-            subject: "Your OTP (Valid for 5 minutes)",
-            message:`Your One Time Password is ${OTPgen}`
-        });
-        console.log(4)
-        const notVerifiedUser = await User.find({email:email});
-        if(notVerifiedUser.length){
-        console.log(6)
-            res.status(200).json(sendSuccessApiResponse(notVerifiedUser,200));
-        }
-        else{
-            const user = await User.create(toStore);
-        console.log(user)
-            res.status(201).json(user);
-        }
+        // const OTPgen = otpGenrator.generate(5,{
+        //     digits:true, lowerCaseAlphabets : false, upperCaseAlphabets:false,
+        //     specialChars:false
+        // })
+        // const OTP = await Otp.updateOne({email:email},{email:email , otp:OTPgen},{upsert:true});
+        // await sendEmail({
+        //     email: email,
+        //     subject: "Your OTP (Valid for 5 minutes)",
+        //     message:`Your One Time Password is ${OTPgen}`
+        // });
+        const user = await User.create(toStore);
+        const data = {user,token: user.generateJWT()} 
+        res.json(sendSuccessApiResponse(data,201));
     }
     catch(err){
         return createCustomError(err,400);

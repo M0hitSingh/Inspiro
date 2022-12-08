@@ -9,6 +9,7 @@ const Category = require("../model/CategoryMaster")
 const Tag = require("../model/TagMaster");
 const TagMaster = require('../model/TagMaster');
 const APIFeatures = require('../util/APIfeature');
+const asyncWrapper = require('../util/asyncWrapper');
 
 
 
@@ -292,14 +293,14 @@ const softdeleteWebsite = async (req, res, next)=>{
         next(createCustomError(err,400));
     }
 }
+const searchWebsite = asyncWrapper(async(req ,res,next)=>{
+
+})
 const getAllWebsite = async(req ,res , user)=>{
     try{
         console.log(1); 
         const SearchString = ["url"]
         const isAdmin =await User.findById(req.user.userId);
-        if(isAdmin.role !='Admin'){
-            return next(createCustomError(`${req.user.userId} is not Admin`,401));
-        }
         const query = new APIFeatures(WebsiteMaster.find({isActive:true}),req.query)
         .filter()
         .sort()
