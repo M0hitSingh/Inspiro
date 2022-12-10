@@ -27,14 +27,14 @@ const app = express();
 //public 
 app.use('/public',express.static('public'))
 
-const MONGO_URL = process.env.MONGO_URL || "mongodb://localhost:27017/test"
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/test"
 // console.log(MONGO_URL)
 
 // ADD THIS IS YOUR CONNECTION FILE
 mongoose.set('strictQuery', true);
 
 // Connecting Database
-const connectDB = mongoose.connect(MONGO_URL,{
+const connectDB = mongoose.connect(MONGO_URI,{
     useNewUrlParser:true,
     useUnifiedTopology:true
 })

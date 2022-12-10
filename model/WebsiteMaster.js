@@ -106,6 +106,14 @@ const WebsiteMasterSchema = new mongoose.Schema(
         isActive :{
             type:Boolean,
             default:false
+        },
+        likeCount:{
+            type:Number,
+            default:0
+        },
+        saveCount:{
+            type:Number,
+            default :0
         }
     }
 );

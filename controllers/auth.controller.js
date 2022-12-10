@@ -23,9 +23,12 @@ const refreshToken= async (req, res, next) => {
 
     let data;
     const token = authHeader.split(" ")[1];
+    console.log(token);
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
         data = await getNewToken(payload);
+        
+
     } catch (error) {
         if (error instanceof jwt.TokenExpiredError) {
             const payload = jwt.decode(token, { complete: true }).payload;
