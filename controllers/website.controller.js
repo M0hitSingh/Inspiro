@@ -23,8 +23,10 @@ const addWebsite = async(req, res, next)=>{
             autoFetchMobile
         } = req.body
         let filename = req.files;
+
         const isWebsite = await WebsiteMaster.findOne({url:url});
         console.log(isWebsite)
+
         if(isWebsite){
             const result = await User.findOne({_id:req.user.userId,Websites:mongoose.Types.ObjectId(isWebsite._id)});
             // console.log(result)
@@ -316,4 +318,10 @@ const getAllWebsite = async(req ,res , user)=>{
         next(createCustomError(err,400));
     }
 }
-module.exports = {addWebsite, updateWebsite,getAllWebsite ,getWebsite,geUrltWebsite ,publishWebsite, softdeleteWebsite}
+
+
+
+
+
+
+module.exports = {addWebsite, updateWebsite,getAllWebsite ,getWebsite,geUrltWebsite ,publishWebsite, softdeleteWebsite,}

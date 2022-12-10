@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const schema = mongoose.Schema;
+var random = require('mongoose-simple-random');
 
 const WebsiteMasterSchema = new mongoose.Schema(
     {
@@ -105,8 +106,20 @@ const WebsiteMasterSchema = new mongoose.Schema(
         isActive :{
             type:Boolean,
             default:false
+        },
+        likeCount:{
+            type:Number,
+            default:0
+        },
+        saveCount:{
+            type:Number,
+            default :0
         }
     }
 );
+
+WebsiteMasterSchema.plugin(random);
+
+
 
 module.exports = mongoose.model("Website", WebsiteMasterSchema, "Website");
