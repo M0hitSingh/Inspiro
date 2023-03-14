@@ -109,7 +109,7 @@ const updateWebsite = async (req, res, next)=>{
         if(!website){
             return next(createCustomError("Not Found",404))
         }
-        if(website.Addedby.toString() != req.user.userId.toString() ){
+        if(website.Addedby.toString() != "63943b3c4d10c01000f995b9".toString() ){
             return next(createCustomError("Cannot Update other's website",404))
         }
         switch (step) {
@@ -164,7 +164,6 @@ const updateWebsite = async (req, res, next)=>{
                 console.log(filename)
                 let i = 0;
                 let k = uploadedurl.length/2;
-
                 for(i=0 ,j=0 ; i< uploadedurl.length ; i=i+2,j++){
                     const toAdd = {
                         pageURL:pageURL[j],
@@ -178,17 +177,6 @@ const updateWebsite = async (req, res, next)=>{
                 }
                 if(filename.DesktopSS){
                     for(i = 0 ; i< (filename.DesktopSS.length);i++){
-                        // const Desktopchunk =[];
-                        // const Mobilechunk = [];
-                        // console.log(DesktopSSLength[i])
-                        // console.log(DesktopSSLength[i+1])
-                        // for(let j = DesktopSSLength[i];j < DesktopSSLength[i+1] ;j++){
-                        //     Desktopchunk.push("/public/WebsiteSS/"+filename.DesktopSS[i].originalname)
-                        // // }
-                        // // for(let j = MobileSSLength[i];j < MobileSSLength[i+1] ;j++){
-                        //     Mobilechunk.push("/public/WebsiteSS/"+filename.MobileSS[i+1].originalname)
-                        // // }
-
                         const toAdd = {
                             pageURL:pageURL[i+k],
                             Category:MyCategory[i+k],
@@ -198,8 +186,6 @@ const updateWebsite = async (req, res, next)=>{
                         }
 
                         website.AssociatedComponent.push(toAdd)
-                        await website.save()
-                        // console.log(website.AssociatedComponent); 
                     }
                 }
                 break;
@@ -229,9 +215,7 @@ const publishWebsite = async(req, res, next)=>{
             category.count++;
             await category.save();
         }
-        const type = await TypeMaster.findById(website.Type.id);
-        type.count++;
-        await type.save()
+        await TypeMaster.findByIdAndUpdate(website.Type.id,{$inc:{count:1}});
         const frame = await FrameworkMaster.findById(website.Framework.id);
         if(frame){
             frame.count++;
@@ -298,11 +282,11 @@ const softdeleteWebsite = async (req, res, next)=>{
 const searchWebsite = asyncWrapper(async(req ,res,next)=>{
 
 })
-const getAllWebsite = async(req ,res , user)=>{
+const getAllWebsite = async(req ,res , next)=>{
     try{
         console.log(1); 
         const SearchString = ["url"]
-        const isAdmin =await User.findById(req.user.userId);
+        // const isAdmin =await User.findById(req.user.userId);
         const query = new APIFeatures(WebsiteMaster.find({isActive:true}),req.query)
         .filter()
         .sort()
